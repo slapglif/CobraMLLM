@@ -2,6 +2,7 @@ import json
 
 from pydantic import BaseModel
 
+
 class Config(BaseModel):
     vision_size: int = 2048
     text_size: int = 10000
@@ -27,6 +28,6 @@ class Config(BaseModel):
 
     @classmethod
     def from_json_file(cls, json_file):
-        with open(json_file, 'r') as f:
+        with open(json_file, "r") as f:
             config_dict = json.load(f)
         return cls(**config_dict)

@@ -43,11 +43,15 @@ class MultimodalDataset(Dataset):
         image = Image.open(image_path).convert("RGB")
 
         # Define image preprocessing and transformations
-        preprocess = transforms.Compose([
-            transforms.Resize((224, 224)),  # Resize the image to a fixed size
-            transforms.ToTensor(),  # Convert the image to a tensor
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # Normalize the image
-        ])
+        preprocess = transforms.Compose(
+            [
+                transforms.Resize((224, 224)),  # Resize the image to a fixed size
+                transforms.ToTensor(),  # Convert the image to a tensor
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),  # Normalize the image
+            ]
+        )
 
         # Apply preprocessing and transformations to the image
         image_tensor = preprocess(image)
@@ -75,9 +79,15 @@ def create_dataloaders(config: Dict[str, Any]) -> Tuple[DataLoader, DataLoader]:
         train_dataset = MultimodalDataset(train_data)
         val_dataset = MultimodalDataset(val_data)
 
-    train_loader = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True,
-                              num_workers=config["num_workers"])
-    val_loader = DataLoader(val_dataset, batch_size=config["batch_size"], num_workers=config["num_workers"])
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=config["batch_size"],
+        shuffle=True,
+        num_workers=config["num_workers"],
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=config["batch_size"], num_workers=config["num_workers"]
+    )
 
     return train_loader, val_loader
 

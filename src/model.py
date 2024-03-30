@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import einops as ein
 
+
 class MambaBlock(nn.Module):
     def __init__(self, hidden_size, num_heads, dropout):
         super().__init__()
@@ -11,7 +12,7 @@ class MambaBlock(nn.Module):
             nn.GELU(),
             nn.Dropout(dropout),
             nn.Linear(4 * hidden_size, hidden_size),
-            nn.Dropout(dropout)
+            nn.Dropout(dropout),
         )
         self.norm1 = nn.LayerNorm(hidden_size)
         self.norm2 = nn.LayerNorm(hidden_size)
@@ -23,13 +24,13 @@ class MambaBlock(nn.Module):
         x = self.norm2(x + ff_output)
         return x
 
+
 class VisionEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, num_heads, dropout):
         super().__init__()
-        self.layers = nn.ModuleList([
-            MambaBlock(hidden_size, num_heads, dropout)
-            for _ in range(num_layers)
-        ])
+        self.layers = nn.ModuleList(
+            [MambaBlock(hidden_size, num_heads, dropout) for _ in range(num_layers)]
+        )
         self.projection = nn.Linear(input_size, hidden_size)
         self.norm = nn.LayerNorm(hidden_size)
 
@@ -39,6 +40,7 @@ class VisionEncoder(nn.Module):
             x = layer(x)
         x = self.norm(x)
         return x
+
 
 class Projector(nn.Module):
     def __init__(self, vision_size, text_size, hidden_size):
@@ -51,10 +53,15 @@ class Projector(nn.Module):
         text_features = self.text_projection(text_features)
         return vision_features, text_features
 
+
 class CobraMLLM(nn.Module):
-    def __init__(self, vision_size, text_size, hidden_size, num_layers, num_heads, dropout, **_):
+    def __init__(
+        self, vision_size, text_size, hidden_size, num_layers, num_heads, dropout, **_
+    ):
         super().__init__()
-        self.vision_encoder = VisionEncoder(vision_size, hidden_size, num_layers, num_heads, dropout)
+        self.vision_encoder = VisionEncoder(
+            vision_size, hidden_size, num_layers, num_heads, dropout
+        )
         self.text_encoder = nn.Embedding(text_size, hidden_size)
         self.projector = Projector(hidden_size, hidden_size, hidden_size)
 
@@ -64,10 +71,10 @@ class CobraMLLM(nn.Module):
         vision_features, text_features = self.projector(vision_features, text_features)
 
         # Einsum operation for efficient matrix multiplication
-        attn_weights = torch.einsum('bld,bvd->blv', text_features, vision_features)
+        attn_weights = torch.einsum("bld,bvd->blv", text_features, vision_features)
         attn_weights = torch.softmax(attn_weights, dim=-1)
 
         # Einops operation for efficient tensor manipulation
-        attended_vision = ein.einsum('blv,bvd->bld', attn_weights, vision_features)
+        attended_vision = ein.einsum("blv,bvd->bld", attn_weights, vision_features)
         output = attended_vision + text_features
         return output

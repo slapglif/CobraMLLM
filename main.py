@@ -18,7 +18,12 @@ def main(config_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a multi-modal language model")
-    parser.add_argument("--config", type=str, default="config.json", help="Path to the configuration JSON file")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="config.json",
+        help="Path to the configuration JSON file",
+    )
     args = parser.parse_args()
 
     main(args.config)

@@ -5,20 +5,35 @@ from torch.utils.data import DataLoader
 from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
 
+
 def train(model, config, train_dataset, val_dataset):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=config.patience, verbose=True)  # noqa: E501
+    optimizer = optim.AdamW(
+        model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
+    )
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode="min", factor=0.1, patience=config.patience, verbose=True
+    )
     scaler = GradScaler()
 
-    train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True,
-                              num_workers=config.num_workers, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=config.batch_size, num_workers=config.num_workers, pin_memory=True)
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=config.batch_size,
+        shuffle=True,
+        num_workers=config.num_workers,
+        pin_memory=True,
+    )
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=config.batch_size,
+        num_workers=config.num_workers,
+        pin_memory=True,
+    )
 
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     early_stopping_counter = 0
 
     for epoch in range(config.num_epochs):
@@ -69,7 +84,9 @@ def train(model, config, train_dataset, val_dataset):
         val_loss /= len(val_loader)
         scheduler.step(val_loss)
 
-        print(f"Epoch {epoch + 1}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}")
+        print(
+            f"Epoch {epoch + 1}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}"
+        )
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
