@@ -1,0 +1,22 @@
+{
+  "weight_decay": 0.01,
+  "patience": 3,
+  "gradient_accumulation_steps": 1,
+  "early_stopping_patience": 5,
+  "vision_size": 2048,
+  "text_size": 10000,
+  "hidden_size": 512,
+  "num_layers": 6,
+  "num_heads": 8,
+  "dropout": 0.1,
+  "learning_rate": 0.0001,
+  "batch_size": 32,
+  "num_epochs": 10,
+  "dataset_type": "hf",
+  "dataset_name": "gondimjoaom/flickr30k-trainready",
+  "train_split": "train",
+  "val_split": "validation",
+  "local_train_data_path": "path/to/local/train/data",
+  "local_val_data_path": "path/to/local/val/data",
+  "num_workers": 4
+}
