@@ -1,28 +1,7 @@
 import torch
 import torch.nn as nn
 import einops as ein
-
-
-class MambaBlock(nn.Module):
-    def __init__(self, hidden_size, num_heads, dropout):
-        super().__init__()
-        self.attention = nn.MultiheadAttention(hidden_size, num_heads, dropout=dropout)
-        self.feed_forward = nn.Sequential(
-            nn.Linear(hidden_size, 4 * hidden_size),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(4 * hidden_size, hidden_size),
-            nn.Dropout(dropout),
-        )
-        self.norm1 = nn.LayerNorm(hidden_size)
-        self.norm2 = nn.LayerNorm(hidden_size)
-
-    def forward(self, x):
-        attn_output, _ = self.attention(x, x, x)
-        x = self.norm1(x + attn_output)
-        ff_output = self.feed_forward(x)
-        x = self.norm2(x + ff_output)
-        return x
+from zeta import MambaBlock
 
 
 class VisionEncoder(nn.Module):

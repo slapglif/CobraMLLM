@@ -85,7 +85,7 @@ def train(model, config, train_dataset, val_dataset):
         scheduler.step(val_loss)
 
         print(
-            f"Epoch {epoch + 1}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}"
+            f"""Epoch {epoch + 1}: Train Loss = {train_loss:.4f}, Val Loss = {val_loss:.4f}"""
         )
 
         if val_loss < best_val_loss:
