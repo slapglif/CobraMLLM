@@ -1,4 +1,8 @@
 # Cobra MLLM
+---------
+Implementation of:
+- https://huggingface.co/papers/2403.14520
+- https://arxiv.org/abs/2403.14520
 
 This repository contains the code for the Cobra Multimodal Language Model (MLLM), a transformer-based model that can process both visual and textual inputs.
 
